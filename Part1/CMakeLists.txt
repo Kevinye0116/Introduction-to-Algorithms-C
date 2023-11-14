@@ -1,4 +1,7 @@
 add_executable(insertion-sort insertion-sort.c)
 add_executable(merge-sort merge-sort.c)
-add_executable(maximum_subarray maximum_subarray.c)
+add_executable(merge-sort-self merge-sort-self.c)
+add_executable(maximum-subarray maximum-subarray.c)
+add_executable(maximum-subarray-re maximum-subarray-re.c)
+add_executable(maximum-subarray-self maximum-subarray-self.c)
 add_executable(quick-sort quick-sort.c)
