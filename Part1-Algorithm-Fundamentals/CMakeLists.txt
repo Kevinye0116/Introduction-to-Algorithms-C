@@ -1,3 +1,4 @@
+add_executable(selection-sort selection-sort.c)
 add_executable(insertion-sort insertion-sort.c)
 add_executable(merge-sort merge-sort.c)
 add_executable(merge-sort-self merge-sort-self.c)
