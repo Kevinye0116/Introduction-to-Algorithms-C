@@ -3,5 +3,8 @@ project(Introduction-to-Algorithms-C C)
 
 set(CMAKE_C_STANDARD 17)
 
-add_subdirectory(Part1-Algorithm-Fundamentals)
-add_subdirectory(Part2-Randomized-Algorithms)
+add_subdirectory(Part1-Foundations)
+add_subdirectory(Part2-Sorting-and-Order-Statistics)
+
+
+add_executable(test test.c)
