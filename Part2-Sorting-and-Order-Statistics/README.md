@@ -20,7 +20,7 @@ In practice, the numbers to be sorted are rarely isolated values. Each is usuall
 
 
 
-#### Why sorting?
+## Why sorting?
 
 Many computer scientists consider sorting to be the most fundamental problem in the study of algorithms. 
 
