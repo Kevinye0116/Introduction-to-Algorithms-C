@@ -24,7 +24,7 @@ In practice, the numbers to be sorted are rarely isolated values. Each is usuall
 
 Many computer scientists consider sorting to be the most fundamental problem in the study of algorithms. 
 
-#### Sorting algorithms
+### Sorting algorithms
 
 We introduced two algorithms that sort *n* real numbers in Chapter 2. **Insertion sort** takes $\Theta(n^{2})$ time in the worst case. Because its inner loops are tight, however, it is a fast sorting algorithm for small input sizes. Moreover, unlike merge sort, it sorts ***in place***, meaning that at most a constant number of elements of the input array are ever stored outside the array, which can be advantageous for space efficiency. Merge sort has a better asymptotic running time, $\Theta(n\lg n)$, but the **MERGE** procedure it uses does not operate in place. (We’ll see a parallelized version of merge sort in Section 26.3)
 
@@ -46,7 +46,7 @@ The table following summarizes the running times of the sorting algorithms from 
 
 
 
-#### Order statistics
+### Order statistics
 
 The *i*th order statistic of a set of *n* numbers is the *i*th smallest number in the set. You can, of course, select the *i*th order statistic by sorting the input and indexing the *i*th element of the output. With no assumptions about the input distribution, thish method runs in $\Omega(n\lg n)$ time, as the lower bound proved in Chapter 8 shows.
 
