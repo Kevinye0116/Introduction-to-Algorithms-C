@@ -10,8 +10,20 @@ void Swap(int *a, int *b) {
     *b = t;
 }
 
+void MaxHeapify(int *arr, int arrSize, int i) {
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    int largest = i;
+    if (l < arrSize && arr[l] > arr[largest]) largest = l;
+    if (r < arrSize && arr[r] > arr[largest]) largest = r;
+    if (largest != i) {
+        Swap(&arr[i], &arr[largest]);
+        MaxHeapify(arr, arrSize, largest);
+    }
+}
+
 void BuildMaxHeap(int *arr, int arrSize) {
-    
+    for (int i = arrSize / 2 - 1; i >= 0; i--) MaxHeapify(arr, arrSize, i);
 }
 
 void HeapSort(int *arr, int arrSize) {
@@ -20,7 +32,7 @@ void HeapSort(int *arr, int arrSize) {
     for (int i = arrSize - 1; i >= 1; i--) {
         Swap(&arr[0], &arr[i]);
         arrSize--;
-        MaxHeapify(arr, 0);
+        MaxHeapify(arr, arrSize, 0);
     }
 }
 
