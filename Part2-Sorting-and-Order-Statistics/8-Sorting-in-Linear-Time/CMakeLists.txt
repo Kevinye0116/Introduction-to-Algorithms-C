@@ -1,0 +1,1 @@
+add_executable(counting-sort counting-sort.c)

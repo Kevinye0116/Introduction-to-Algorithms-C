@@ -88,7 +88,7 @@ Thus, if the partitioning is maximally unbalanced at every recursive level of th
 
 In the most even possible split, **PARTITION** produces two subproblems, each of size no more than $n/2$, since one is of size $[(n-1)//2]\leq n/2$ and one of size $[(n-1)//2]-1\leq n/2$. In this case, quicksort runs much faster. An upper bound on the running time can then be described by the recurrence
 $$
-T(n)=2T(n/2)+\Theta(n).
+T(n)=2T(\frac{n}{2})+\Theta(n).
 $$
 This recurrence has the solution $T(n)=\Theta(n\lg n)$. Thus, if the partitioning is equally balanced at every level of the recursion, an asymptotically faster algorithm results.
 
@@ -96,7 +96,7 @@ This recurrence has the solution $T(n)=\Theta(n\lg n)$. Thus, if the partitionin
 
 As the analyses will show, the average-case running time of quicksort is much closer to the best case than to the worst case. Suppose, for example, that the partitioning algorithm always produces a 9-10-1 proportional split, which at first blush seems quite unbalanced. We then obtain the recurrence
 $$
-T(n)=T(\frac{9n}{10})+T(\frac{n}{10})+\Theta(n),
+T(n)=T(\frac{9}{10}n)+T(\frac{1}{10}n)+\Theta(n),
 $$
 on the running time of quicksort. Every level of the recursion tree has cost $n$, until the recursion bottoms out in a base case at depth $\log_{10} f=\Theta(\lg n)$, and then the levels have cost at most $n$. The recursion terminates at depth $\log_{\frac{10}{9}} n=\Theta(\lg n)$. Thus with a 9-to-1 proportional split at every level of recursion, which intuitively seems highly unbalanced, quicksort runs in $O(n\lg n)$ time - asymptotically the same as if the split were right down the middle.  In fact, any split of *constant* proportionality yields a recursion tree of depth $\Theta(\lg n)$, where the cost at each level is $O(n)$. The running time is therefore $O(n\lg n)$ whenever the split has constant proportionality. The ratio of the split affects only the constant hidden in the $O$-notation.
 
@@ -134,6 +134,79 @@ if p < r
 ## 7.4	Analysis of quicksort
 
 > This part is omitted in my personal notes.
+
+
+
+
+
+---
+
+#### C source code of QUICKSORT-RANDOMIZED
+
+```c
+//
+// Created by Kevin Ye on 11/21/2023.
+// Copyright  (c) 2023 Kevin Ye. All rights reserved.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void Swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int PartitionRandomized(int *arr, int low, int high) {
+    srand(time(NULL));
+    int pivotIndex = low + rand() % (high - low + 1);
+    Swap(&arr[pivotIndex], &arr[high]);
+
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            Swap(&arr[i], &arr[j]);
+        }
+    }
+    Swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+void QuickSortRandomized(int *arr, int low, int high) {
+    if (low < high) {
+        int part = PartitionRandomized(arr, low, high);
+        QuickSortRandomized(arr, low, part - 1);
+        QuickSortRandomized(arr, part + 1, high);
+    }
+}
+
+int main(void) {
+    int arr[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int arrSize = sizeof(arr) / sizeof(arr[0]);
+
+    clock_t start_time = clock();			// Time estimating starts
+
+    printf("The original array is:");
+    for (int i = 0; i < arrSize; i++) printf("%d ", arr[i]);
+    printf("\n");
+
+    QuickSortRandomized(arr, 0, arrSize - 1);
+
+    printf("The sorted array is : ");
+    for (int i = 0; i < arrSize; i++) printf("%d ", arr[i]);
+    printf("\n");
+
+    clock_t end_time = clock();				// Time estimating ends
+
+    double elapsed_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;// Calculate the used-time
+    printf("Elapsed time: %.6lf seconds\n", elapsed_time);
+    return 0;
+}
+
+```
 
 
 
