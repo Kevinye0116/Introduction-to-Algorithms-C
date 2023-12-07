@@ -1,10 +1,8 @@
 //
-// Created by Kevin Ye on 12/5/2023.
-// Copyright (c) KevinYe on 12/5/2023.
-
+// Created by Kevin Ye on 11/30/2023.
+// Copyright (c) KevinYe on 11/30/2023.
 
 #include <stdio.h>
-#include <string.h>
 
 #define MAX_SIZE 100
 
@@ -13,38 +11,68 @@ typedef struct {
   int front, rear;
 } Queue;
 
-void Initialize(Queue *queue) {
-    queue->front = -1;
-    queue->rear = -1;
+void initializeQueue(Queue *q) {
+    q->front = -1;
+    q->rear = -1;
 }
 
-int isFull(const Queue *queue) {
-    return (queue->front == -1 && queue->rear == -1);
+int isEmpty(const Queue *q) {
+    return (q->front == -1 && q->rear == -1);
 }
 
-int isEmpty(const Queue *queue) {
-    return (queue->rear + 1) % MAX_SIZE == queue->front;
+int isFull(const Queue *q) {
+    return (q->rear + 1) % MAX_SIZE == q->front;
 }
 
-void Enqueue(Queue *queue, int value) {
-    if (isFull(queue))
-}
-
-int main(void) {
-    Queue myQueue;
-    Initialize(&myQueue);
-    char op[10];
-    while (1) {
-        fgets(op, 10, stdin);
-        op[9] = '\0';
-        if (!strncmp(op, "exit", 4)) break;
-        else if (!strncmp(op, "enqueue", 7)) {
-            int value;
-            scanf("%d", &value)
-            Enqueue(&myQueue, value);
-        } else if (!strncmp(op, "dequeue", 7)) {
-            continue;
-        } else printf("Invalid Operation!\n");
+void enqueue(Queue *q, int value) {
+    if (isFull(q)) {
+        printf("Queue is full. Cannot enqueue.\n");
+        return;
     }
+
+    if (isEmpty(q)) {
+        q->front = 0;
+        q->rear = 0;
+    } else {
+        q->rear = (q->rear + 1) % MAX_SIZE;
+    }
+
+    q->arr[q->rear] = value;
+    printf("Enqueued: %d\n", value);
+}
+
+int dequeue(Queue *q) {
+    int value;
+
+    if (isEmpty(q)) {
+        printf("Queue is empty. Cannot dequeue.\n");
+        return -1;
+    }
+
+    value = q->arr[q->front];
+
+    if (q->front == q->rear) {
+        initializeQueue(q);
+    } else {
+        q->front = (q->front + 1) % MAX_SIZE;
+    }
+
+    printf("Dequeued: %d\n", value);
+    return value;
+}
+
+int main() {
+    Queue myQueue;
+    initializeQueue(&myQueue);
+
+    enqueue(&myQueue, 10);
+    enqueue(&myQueue, 20);
+    enqueue(&myQueue, 30);
+
+    dequeue(&myQueue);
+    dequeue(&myQueue);
+
+    enqueue(&myQueue, 40);
+
     return 0;
 }
