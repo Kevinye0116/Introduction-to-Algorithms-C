@@ -89,8 +89,8 @@ The C source code of **Stack** (using struct):
 #define MAX_SIZE 1000
 
 typedef struct {
-  int array[MAX_SIZE];
-  int top;
+    int array[MAX_SIZE];
+    int top;
 } Stack;
 
 void initialize(Stack *stack) {
@@ -185,3 +185,352 @@ else Q.head = Q.head + 1
 return x
 ```
 
+> - [ ] There’s something wrong with the source code? (Now from ChatGPT solved.)
+
+The C source code of **QUEUE** given by ChatGPT: 
+
+```c
+//
+// Created by Kevin Ye on 11/30/2023.
+// Copyright (c) KevinYe on 11/30/2023.
+
+#include <stdio.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int arr[MAX_SIZE];
+    int front, rear;
+} Queue;
+
+void initializeQueue(Queue *q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+int isEmpty(const Queue *q) {
+    return (q->front == -1 && q->rear == -1);
+}
+
+int isFull(const Queue *q) {
+    return (q->rear + 1) % MAX_SIZE == q->front;
+}
+
+void enqueue(Queue *q, int value) {
+    if (isFull(q)) {
+        printf("Queue is full. Cannot enqueue.\n");
+        return;
+    }
+
+    if (isEmpty(q)) {
+        q->front = 0;
+        q->rear = 0;
+    } else {
+        q->rear = (q->rear + 1) % MAX_SIZE;
+    }
+
+    q->arr[q->rear] = value;
+    printf("Enqueued: %d\n", value);
+}
+
+int dequeue(Queue *q) {
+    int value;
+
+    if (isEmpty(q)) {
+        printf("Queue is empty. Cannot dequeue.\n");
+        return -1;
+    }
+
+    value = q->arr[q->front];
+
+    if (q->front == q->rear) {
+        initializeQueue(q);
+    } else {
+        q->front = (q->front + 1) % MAX_SIZE;
+    }
+
+    printf("Dequeued: %d\n", value);
+    return value;
+}
+
+int main() {
+    Queue myQueue;
+    initializeQueue(&myQueue);
+
+    enqueue(&myQueue, 10);
+    enqueue(&myQueue, 20);
+    enqueue(&myQueue, 30);
+
+    dequeue(&myQueue);
+    dequeue(&myQueue);
+
+    enqueue(&myQueue, 40);
+
+    return 0;
+}
+
+```
+
+---
+
+
+
+## 10.2	Linked lists
+
+A ***linked list*** is a data structure in which the objects are arranged in a linear order. Unlike an array, however, in which the linear order is determined by the array indices, the order in a linked list is determined by a pointer in each object. Since the elements of linked lists often contain keys that can be searched for, linked lists are sometimes called ***search lists***. Linked lists provide a simple, flexible representation for dynamic sets.
+
+Each element of a ***double linked list*** $L$ is an object with an attribute $key$ and two pointer attributes: $next$ and $prev$. The object ma also contain other satellite data. Given an element $x$ in the list, $x.next$ points to its successor in the linked list, and $x.prev$ points to its predecessor. If $x.prev=NIL$, the element $x$ has no predecessor and is therefore the first element, or ***head***, of the list. If $x.next=NIL,$ the element $x$ has no successor and is therefore the last element, or ***tail***, of the list. An attribute $L.head$ points to the first element of the list. If $L.head=NIL,$ the list is empty.
+
+A list may have one of several forms. It may be either singly linked or doubly linked, it may by sorted or not, and it may be circular or not. If a list is ***singly linked***, each element has a $next$ pointer but not a $prev$ pointer. If a list is ***sorted***, the linear order of the list corresponds to the linear order of keys stored in elements of the list. The minimum element is then the head of the list, and the maximum element is the tail. If the list is ***unsorted***, the elements can appear in any order. In a ***circular list***, the $prev$ pointer of the head of the list points to the tail, and the $next$ pointer of the tail of the list points to the head. You can think of a circular list as a ring of elements. In the remainder of this section, we assume that the lists we are working with are unsorted and doubly linked.
+
+### Searching a linked list
+
+The procedure **LIST-SEARCH($L$, $k$)** finds the first element with key $k$ in  list $L$ by a simple linear search, returning a pointer to this element. If no object with key $k$ appears in the list, then the procedure returns **NIL**. For the linked list in Figure 10.4(a), the call **LIST-SEARCH($L$, $4$)** returns a pointer to the third element, and the call **LIST-SEARCH($L$, $7$)** returns **NIL**. To search a list of $n$ objects, the **LIST-SEARCH** procedure takes $\Theta(n)$ time in the worst case, since it may have to search the entire list.
+
+##### LIST-SEARCH($L$, $k$)
+
+```pseudocode
+x = L.head
+while x != NIL and x.key != k
+	x = x.next
+return x
+```
+
+### Inserting into a linked list
+
+Given an element $x$ whose $key$ attribute has already been set, the **LIST-PREPEND** procedure adds $x$ to the front of the linked list. The running time for **LIST-PREPEND** on a list of $n$ elements is $O(1)$.
+
+##### LIST-PREPEND($L$,$x$)
+
+```pseudocode
+x.next = L.head
+x.prev = NIL
+if L.head != NIL
+	L.head.prev = x
+L.head = x
+```
+
+You can insert anywhere within a linked list. If you have a pointer $y$ to an object in the list, the **LIST-INSERT** procedure “splices”a new element $x$ into the list, immediately following $y$, in $O(1)$ time. Since **LIST-INSERT** never references the list object $L$, it is not supplied as a parameter.
+
+##### LIST-INSERT($x$, $y$)
+
+```pseudocode
+x.next = y.next
+x.prev = y
+if y.next != NIL
+	y.next.prev = x
+y.next = x
+```
+
+### Deleting from a linked list
+
+The procedure **LIST-DELETE** removes an element $x$ from a linked list $L$. It must be given a pointer to $x$, and it then “splices” $x$ out of the list by updating pointers. To delete an element with a given key, first call **LIST-SEARCH** to retrieve a pointer to the element. **LIST-DELETE** runs in $O(1)$ time, but to delete an element with a given key, the call to **LIST-SEARCH** makes the worst-case running time be $\Theta(n)$.
+
+##### LIST-DELETE($L$, $x$)
+
+```pseudocode
+if x.prev != NIL
+	x.prev.next = x.next
+else L.head = x.next
+if x.next != NIL
+	x.next.prev = x.prev
+```
+
+Insertion and deletion are faster operations on doubly linked lists than on arrays. If you want to insert a new first element into an array or delete the first element in an array, maintaining the relative order of all the existing elements, then each of the existing elements needs to be moved by one position. In the worst case, therefore, insertion and deletion takes $\Theta(n)$ time in an array, compared with $O(1)$ time for a doubly linked list. If, however, you want to find the $k$th element in the linear order, it takes just $O(1)$ time in an array regardless of $k$, but in a linked list, you’d have to traverse $k$ elements, taking $\Theta(k)$ time.
+
+### Sentinels
+
+The code for **LIST-DELETE** is simpler if you ignore the boundary conditions at the head and tail of the list:
+
+##### LIST-DELETE$’$($x$)
+
+```pseudocode
+x.prev.next = x.next
+x.next.prev = x.prev
+```
+
+A ***sentinel*** is a dummy object that allows us to simplify boundary conditions. In a linked list $L$, the sentinel is an object $L.nil$ that represents **NIL** but has all the attributes of the other objects in the list. References to **NIL** are replaced by references to the sentinel $L.nil$. This change turns a regular doubly linked list into a ***circular, doubly linked list with a sentinel***, in which the sentinel $L.nil$ lies between the head and tail. The attribute $L.nil.next$ points to the head of the list, and $L.nil.prev$ points to the tail. Similarly, both the $next$ attribute of the tail and the $prev$ attribute of the head point to $L.nil$. Since $L.nil.next$ points to the head, the attribute $L.head$ is eliminate altogether, with references to it replaced by references to $L.nil.next$.
+
+To delete an element from the list, just use the two-line procedure L**IST-DELETE$’$** from before. Just as **LIST-INSERT** never references the list object $L$, neither does **LIST-DELETE$’$**. ==You should never delete the sentinel $L.nil$ unless you are deleting the entire list!==
+
+The **LIST-INSERT$’$** procedure inserts an element $x$ into the list following object $y$. No separate procedure for prepending is necessary: to insert at the head of the list, let $y$ be $L.nil$; and to insert at the tail, let $y$ be $L.nil.prev$.
+
+##### LIST-INSERT$’$($x$, $y$)
+
+```pseudocode
+x.next = y.next
+x.prev = y
+y.next.prev = x
+y.next = x
+```
+
+Searching a circular, doubly linked list with a sentinel has the same asymptotic running time as without a sentinel, but it is possible to decrease the constant factor. The test in line 2 of **LIST-SEARCH** makes two comparisons: one to check whether the search has run off the end of the list and, if not, one to check whether the key resides in the current element $x$. Suppose that you *know* that the key is somewhere in the list. Then you do not need to check whether the search runs off the end of the list, thereby eliminating one comparison in each iteration of the **while** loop.
+
+The sentinel provides a place to put the key before starting the search. The search starts at the head $L.nil.next$ of list $L$, and it stops if it finds the key somewhere in the list. Now the search is guaranteed to find the key, either in the sentinel or before reaching the sentinel. If the key is found before reaching the sentinel, then it really is in the element where the search stops. If, however, the search goes through all the elements in the list and finds the key only in the sentinel, then the key is not really in the list, and the search returns **NIL**. The procedure **LIST-SEARCH$’$** embodies this idea.
+
+##### LIST-SEARCH$’$($L$, $k$)
+
+```pseudocode
+L.nil.key = k
+x = L.nil.next
+while x.key != k
+	x = x.next
+if x == L.nil
+	return NIL
+else return x
+```
+
+Sentinels often simplify code and, as in searching a linked list, they might speed up code by a small constant factor, but they don’t typically improve the asymptotic running time. Use them judiciously. When there are man small lists, the extra storage used by their sentinels can represent significant wasted memory.
+
+C source code of **LinkedList** provided by ChatGPT:
+
+```c
+//
+// Created by Kevin Ye on 12/11/2023.
+// Copyright (c) KevinYe on 12/11/2023.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *InitNode() {
+    return NULL;
+}
+
+struct Node *Prepend(struct Node *head, int data) {
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory Allocation Failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = data;
+    newNode->next = head;
+    head = newNode;
+
+    return head;
+}
+
+struct Node *insertAtEnd(struct Node *head, int data) {
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory Allocation Failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        head = newNode;
+    } else {
+        struct Node *current = head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+    return head;
+}
+
+struct Node *insertAtPosition(struct Node *head, int data, int position) {
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory Allocation Failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    newNode->data = data;
+
+    if (position == 1) {
+        newNode->next = head;
+        head = newNode;
+    } else {
+        struct Node *current = head;
+        int count = 1;
+
+        while (count < position - 1 && current != NULL) {
+            current = current->next;
+            count++;
+        }
+
+        if (current == NULL) {
+            printf("Invalid position\n");
+            free(newNode);
+            return head;
+        }
+
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+
+    return head;
+}
+
+struct Node *search(struct Node *head, int key) {
+    struct Node *current = head;
+
+    while (current != NULL) {
+        if (current->data == key) {
+            return current;
+        }
+        current = current->next;
+    }
+
+    return NULL;
+}
+
+void printList(struct Node *head) {
+    struct Node *current = head;
+    printf("List: ");
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node *head) {
+    struct Node *current = head;
+    struct Node *next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(int argc, char *argv[]) {
+    struct Node *myList = InitNode();
+
+    myList = Prepend(myList, 1);
+    myList = Prepend(myList, 2);
+    myList = insertAtEnd(myList, 3);
+    myList = insertAtEnd(myList, 4);
+    myList = insertAtPosition(myList, 5, 3);
+
+    printList(myList);
+
+    int keyToSearch = 3;
+    const struct Node *result = search(myList, keyToSearch);
+    if (result != NULL) {
+        printf("%d found in the list\n", keyToSearch);
+    } else {
+        printf("%d not found in the list\n", keyToSearch);
+    }
+
+    freeList(myList);
+
+    return 0;
+}
+```
+
+---
+
+Copyright © Kevin Ye, 2023.
+
+All Rights Reserved.
